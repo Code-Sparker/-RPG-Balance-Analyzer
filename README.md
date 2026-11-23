@@ -91,4 +91,4 @@ Szczegółowe informacje o testach i sprawdzaniu poprawności programu znajdują
 
 ## Autor
 
-Imię i nazwisko: [WPISZ SWOJE IMIĘ I NAZWISKO]
+Imię i nazwisko: [viktoriisa yasiukevych]
