@@ -1,189 +1,204 @@
-Reverse Prompt Engineering – system balansu postaci RPG
+# PROMPTY – RPG BALANCE ANALYZER
 
-Autor: [Wpisz swoje imię i nazwisko]
-Przedmiot: Informatyka
-Temat: Reverse Prompt Engineering
-Cel: Przebudowa programu RPG z wersji A do systemu analizującego balans postaci z wykorzystaniem NumPy.
+## Cel projektu
 
-1. Prompt – zmiana struktury danych
+Celem projektu jest stopniowe przekształcenie początkowego programu analizującego postacie RPG w bardziej rozbudowany analizator balansu.
 
-Cel: Zastąpienie listy słowników tablicami NumPy.
+Przebudowa odbywa się etapami przy użyciu modelu AI. Model otrzymuje wyłącznie kod początkowy (wersja A), a następnie realizuje kolejne wymagania przekazywane za pomocą promptów.
 
-Prompt wysłany do AI:
+Kod wersji docelowej B nie jest przekazywany modelowi.
 
-Przebuduj sposób przechowywania danych postaci RPG.
+---
 
-Wymagania:
+## PROMPT 1 – Zmiana struktury danych na NumPy
 
-Zastosuj bibliotekę NumPy.
-Nazwy postaci umieść w tablicy NAZWY.
-Statystyki umieść w dwuwymiarowej tablicy STATYSTYKI.
-Zachowaj kolejność statystyk: HP, atak, obrona, szybkość.
-Ustaw typ danych statystyk na float.
-Utwórz osobną tablicę wag WAGI o wartościach 0.20, 0.40, 0.25, 0.15.
-Utwórz stałą KOLUMNY z nazwami statystyk.
-Zachowaj wszystkie osiem początkowych postaci.
+**Opis zmiany:** Zastąpienie podstawowej struktury danych tablicami NumPy.
 
-Kryterium sprawdzenia: tablica statystyk musi mieć osiem wierszy i cztery kolumny, a liczba nazw musi odpowiadać liczbie postaci.
+**Treść promptu:**
 
-2. Prompt – normalizacja i obliczanie siły
-
-Cel: Zastąpienie starego wzoru obliczania siły normalizacją min-max.
-
-Prompt wysłany do AI:
-
-Dodaj do programu funkcje normalizuj(dane) i oblicz_sile(dane).
+Przeanalizuj otrzymany kod programu RPG i zmodyfikuj sposób przechowywania danych postaci.
 
 Wymagania:
+1. Wykorzystaj bibliotekę NumPy.
+2. Przechowuj nazwy postaci w osobnej tablicy.
+3. Przechowuj wartości statystyk w dwuwymiarowej tablicy NumPy.
+4. Zachowaj powiązanie nazw postaci z odpowiednimi statystykami.
+5. Zadbaj o czytelność kodu i oddzielenie danych od obliczeń.
 
-Zastosuj normalizację min-max osobno dla każdej kolumny.
-Wykorzystaj np.min i np.ptp.
-Zabezpiecz stałe kolumny przed dzieleniem przez zero.
-Wykorzystaj np.divide, out i where.
-Oblicz siłę jako iloczyn macierzy znormalizowanych danych i wag.
-Zastosuj mnożenie macierzowe NumPy @.
-Nie używaj pętli do obliczania siły każdej postaci osobno.
+Nie usuwaj istniejących danych postaci. Przedstaw kompletny zmodyfikowany kod.
 
-Kryterium sprawdzenia: wartości znormalizowane muszą mieścić się w przedziale 0–1, a kolumny o stałych wartościach muszą zawierać same zera.
+## PROMPT 2 – Normalizacja statystyk i ważony wynik siły
 
-3. Prompt – role postaci i ranking
+**Opis zmiany:** Wprowadzenie normalizacji min-max oraz obliczania łącznej siły postaci.
 
-Cel: Dodanie automatycznej klasyfikacji postaci i rankingu.
+**Treść promptu:**
 
-Prompt wysłany do AI:
-
-Dodaj funkcję okresl_role(dane) i system rankingu.
+Rozbuduj program o normalizację statystyk postaci.
 
 Wymagania:
+1. Zastosuj normalizację min-max do każdej kolumny statystyk.
+2. Wykorzystaj operacje wektorowe NumPy zamiast ręcznego przetwarzania każdej postaci.
+3. Zabezpiecz normalizację przed dzieleniem przez zero, gdy wszystkie wartości w kolumnie są identyczne.
+4. Oblicz ważony wynik siły postaci.
+5. Zastosuj następujące wagi: HP – 0.20, atak – 0.40, obrona – 0.25, szybkość – 0.15.
+6. Wynik siły powinien być liczbą z przedziału od 0 do 1.
 
-Postać z atakiem co najmniej 35 i szybkością co najmniej 12 otrzymuje rolę Szturmowiec.
-Postać z HP co najmniej 120 i obroną co najmniej 18 otrzymuje rolę Obrońca.
-Pozostałe postacie otrzymują rolę Wszechstronny.
-Jeżeli postać spełnia oba warunki, pierwszeństwo ma Szturmowiec.
-Wykorzystaj wektorowe operacje NumPy i np.select.
-Utwórz ranking malejący według siły.
-Przy identycznych wynikach zachowaj kolejność początkową, wykorzystując stabilne sortowanie.
+Sprawdź, czy suma wag wynosi 1. Zachowaj poprawność wcześniejszego kodu.
 
-Kryterium sprawdzenia: każda postać musi mieć jedną rolę, a ranking musi zawierać wszystkie postacie.
+## PROMPT 3 – Ranking i automatyczne przypisywanie ról
 
-4. Prompt – macierz pojedynków
+**Opis zmiany:** Dodanie rankingu postaci oraz automatycznego określania ich ról.
 
-Cel: Symulowanie prawdopodobieństwa wygranej pomiędzy postaciami.
+**Treść promptu:**
 
-Prompt wysłany do AI:
-
-Dodaj funkcję macierz_pojedynkow(sila).
+Dodaj do programu system rankingu postaci RPG.
 
 Wymagania:
+1. Posortuj postacie malejąco według obliczonego wyniku siły.
+2. Wykorzystaj NumPy do sortowania.
+3. Zachowaj powiązanie nazwy, statystyk i wyniku siły.
+4. Zastosuj stabilne sortowanie, aby postacie z identycznym wynikiem zachowały pierwotną kolejność.
+5. Dodaj automatyczne przypisywanie ról na podstawie dominujących statystyk postaci.
+6. Wyświetl nazwę postaci, miejsce w rankingu, wynik siły i przypisaną rolę.
 
-Oblicz różnice siły wszystkich par postaci za pomocą broadcastingu NumPy.
-Zastosuj wzór logistyczny 1 / (1 + exp(-8 * różnica)).
-Wynik musi być kwadratową macierzą.
-Na przekątnej ustaw wartości 0.5.
-Prawdopodobieństwa wygranej dwóch różnych postaci w przeciwnych kierunkach muszą sumować się do 1.
-Nie stosuj zagnieżdżonych pętli.
+Nie przypisuj ról losowo. Reguły przypisywania powinny być jednoznaczne i powtarzalne.
 
-Kryterium sprawdzenia: przekątna macierzy ma zawierać 0.5, a suma macierzy i jej transpozycji musi dawać macierz jedynek.
+## PROMPT 4 – Filtrowanie i statystyki zbiorcze
 
-5. Prompt – walidacja danych
+**Opis zmiany:** Rozbudowanie analizy o filtrowanie postaci i statystyki całej grupy.
 
-Cel: Zabezpieczenie programu przed błędnymi danymi.
+**Treść promptu:**
 
-Prompt wysłany do AI:
-
-Dodaj funkcję waliduj(nazwy, dane).
-
-Wymagania:
-
-Sprawdź, czy macierz jest dwuwymiarowa.
-Sprawdź, czy zawiera dokładnie cztery kolumny.
-Liczba wierszy musi odpowiadać liczbie nazw.
-Muszą istnieć przynajmniej dwie postacie.
-Nazwy muszą być unikatowe.
-Statystyki muszą być skończonymi liczbami.
-Statystyki nie mogą być ujemne.
-Przy niepoprawnych danych zgłaszaj ValueError z czytelnym komunikatem.
-Wykorzystaj np.isfinite i np.any.
-
-Kryterium sprawdzenia: funkcja musi wykrywać duplikaty, wartości ujemne, NaN, nieskończoność i nieprawidłowy kształt danych.
-
-6. Prompt – średnie szanse i raport
-
-Cel: Rozbudowanie wyników programu.
-
-Prompt wysłany do AI:
-
-Dodaj obliczanie średnich szans wygranej każdej postaci oraz czytelny raport.
+Dodaj do programu funkcjonalność filtrowania i analizowania postaci RPG.
 
 Wymagania:
+1. Umożliw filtrowanie postaci na podstawie wartości ich statystyk.
+2. Wykorzystaj maski logiczne NumPy.
+3. Oblicz średnie wartości poszczególnych statystyk.
+4. Oblicz minimalne i maksymalne wartości statystyk.
+5. Wyświetl czytelne podsumowanie wyników.
+6. Zadbaj o poprawną obsługę sytuacji, w której filtr nie zwraca żadnej postaci.
 
-Wykorzystaj macierz pojedynków.
-Oblicz średnią szansę wygranej z pozostałymi postaciami.
-Nie uwzględniaj pojedynku postaci z samą sobą.
-Wyświetl ranking, nazwę, rolę, siłę i średnią szansę wygranej.
-Siłę pokazuj z dokładnością do czterech miejsc po przecinku.
-Szanse wygranej pokazuj procentowo.
-Dodaj statystyki ogólne, w tym średnią siłę i liczbę postaci.
+Nie zmieniaj wyników rankingu dla danych, które nie zostały przefiltrowane.
 
-Kryterium sprawdzenia: raport musi zawierać wszystkie postacie, a średnie szanse muszą być liczone bez przekątnej macierzy.
+## PROMPT 5 – Walidacja danych wejściowych
 
-7. Prompt – eksport CSV
+**Opis zmiany:** Zabezpieczenie programu przed nieprawidłowymi danymi.
 
-Cel: Dodanie zapisu wyników do pliku.
+**Treść promptu:**
 
-Prompt wysłany do AI:
-
-Dodaj funkcję zapisz_csv(sciezka, nazwy, role, sila, srednie_szanse, ranking).
+Dodaj dokładną walidację danych wejściowych programu RPG Balance Analyzer.
 
 Wymagania:
+1. Sprawdź, czy tablica statystyk ma prawidłowy wymiar.
+2. Sprawdź, czy liczba nazw odpowiada liczbie zestawów statystyk.
+3. Odrzuć nieprawidłowe wartości liczbowe.
+4. Wykrywaj wartości NaN oraz nieskończoność.
+5. Odrzuć ujemne wartości statystyk.
+6. Sprawdź, czy nazwy postaci są prawidłowe.
+7. Zwracaj czytelne komunikaty błędów.
 
-Wykorzystaj bibliotekę csv.
-Zapisuj dane w kodowaniu utf-8-sig.
-Użyj separatora średnika.
-Dodaj nagłówki: Miejsce, Postać, Rola, Siła, Średnia szansa wygranej.
-Dane zapisuj w kolejności rankingu.
-Numerację rozpocznij od 1.
-Siłę zapisuj z czterema miejscami po przecinku.
-Szanse zapisuj procentowo z dwoma miejscami po przecinku.
-Przy otwieraniu pliku zastosuj newline="".
+Walidacja powinna odbywać się przed wykonywaniem obliczeń. Nie pozwól, aby błędne dane powodowały nieprawidłowe wyniki programu.
 
-Kryterium sprawdzenia: plik CSV musi zawierać wszystkie postacie i poprawne polskie znaki.
+## PROMPT 6 – Symulacja pojedynków i macierz wyników
 
-8. Prompt – testy i integracja
+**Opis zmiany:** Dodanie mechanizmu porównywania postaci w pojedynkach.
 
-Cel: Połączenie wszystkich funkcji w kompletny program.
+**Treść promptu:**
 
-Prompt wysłany do AI:
-
-Dodaj funkcję testy() oraz końcową funkcję main().
+Rozbuduj program o symulację pojedynków pomiędzy wszystkimi postaciami.
 
 Wymagania:
+1. Wykorzystaj obliczone wyniki siły postaci.
+2. Zastosuj matematyczny model logistyczny do wyznaczania szans zwycięstwa.
+3. Wygeneruj dwuwymiarową macierz pojedynków.
+4. Każda komórka macierzy powinna przedstawiać szansę zwycięstwa postaci z wiersza nad postacią z kolumny.
+5. Szanse powinny być przedstawione jako wartości procentowe.
+6. Szansa pojedynku postaci z samą sobą powinna wynosić 50%.
+7. Wyniki pojedynków dwóch różnych postaci powinny być wzajemnie uzupełniające się do 100%.
 
-Przetestuj normalizację danych.
-Przetestuj kolumny o stałych wartościach.
-Przetestuj macierz pojedynków.
-Sprawdź przekątną macierzy.
-Sprawdź symetrię prawdopodobieństw.
-Wykorzystaj np.testing.assert_allclose.
-W funkcji main() wykonaj walidację, testy, obliczenia siły, klasyfikację, ranking, pojedynki i eksport CSV.
-Dodaj punkt wejścia if __name__ == "__main__":.
-Zachowaj podział programu na funkcje.
+Zastosuj operacje NumPy i unikaj niepotrzebnych pętli.
 
-Kryterium sprawdzenia: program ma uruchamiać się bez błędów, przechodzić testy i generować plik CSV.
+## PROMPT 7 – Średnie szanse wygranej i eksport CSV
 
-9. Podsumowanie
+**Opis zmiany:** Dodanie podsumowania pojedynków i zapisywania wyników do pliku.
 
-Przebudowa programu została podzielona na osiem etapów. Każdy prompt odpowiada za konkretną funkcjonalność.
+**Treść promptu:**
 
-Dzięki temu możliwe jest stopniowe rozwijanie programu i sprawdzanie poprawności poszczególnych elementów.
+Dodaj do programu obliczanie średnich szans wygranej każdej postaci oraz eksport wyników.
 
-Kolejność przebudowy:
+Wymagania:
+1. Oblicz średnią szansę zwycięstwa każdej postaci przeciwko pozostałym postaciom.
+2. Pomijaj pojedynki postaci z samą sobą podczas obliczania średniej.
+3. Dodaj średnią szansę wygranej do informacji o postaci.
+4. Eksportuj wyniki do pliku `ranking_postaci.csv`.
+5. Zapisz ranking, nazwę postaci, wynik siły, przypisaną rolę oraz średnią szansę wygranej.
+6. Zastosuj bibliotekę csv.
+7. Zadbaj o poprawne kodowanie polskich znaków.
+8. Zastosuj czytelne nagłówki kolumn.
 
-Struktura danych.
-Normalizacja i obliczanie siły.
-Role i ranking.
-Macierz pojedynków.
-Walidacja.
-Średnie szanse i raport.
-Eksport CSV.
-Testy i integracja.
+Po zakończeniu działania programu plik CSV powinien być automatycznie generowany lub aktualizowany.
+
+## PROMPT 8 – Testy jednostkowe i integracja
+
+**Opis zmiany:** Sprawdzenie poprawności całego programu i przygotowanie końcowej wersji.
+
+**Treść promptu:**
+
+Przeanalizuj cały program RPG Balance Analyzer i przygotuj testy jednostkowe sprawdzające jego działanie.
+
+Wymagania:
+1. Wykorzystaj bibliotekę unittest.
+2. Przetestuj normalizację statystyk.
+3. Przetestuj obsługę stałych kolumn.
+4. Przetestuj obliczanie ważonej siły.
+5. Przetestuj ranking i remisy.
+6. Przetestuj przypisywanie ról.
+7. Przetestuj walidację nieprawidłowych danych.
+8. Przetestuj macierz pojedynków.
+9. Przetestuj średnie szanse wygranej.
+10. Przetestuj eksport CSV.
+11. Sprawdź przypadki brzegowe.
+12. Usuń błędy i zachowaj wszystkie wcześniejsze funkcjonalności.
+
+Przygotuj kompletny kod programu oraz osobny plik `test_main.py`. Podaj instrukcję uruchamiania programu i testów.
+
+---
+
+## 9. Dokumentowanie korekt promptów
+
+Korekty należy wprowadzać po rzeczywistym wykryciu nieprawidłowości lub niepełnego wyniku.
+
+### Korekta 1 – Normalizacja stałych kolumn
+
+**Prompt pierwotny:** PROMPT 2.
+
+**Sytuacja do przetestowania:** Wszystkie postacie posiadają identyczną wartość jednej statystyki.
+
+**Dodatkowe polecenie:**
+
+Sprawdź działanie normalizacji min-max dla kolumny, w której minimum jest równe maksimum. Zabezpiecz obliczenia przed dzieleniem przez zero. Wynik normalizacji takiej kolumny powinien być określony i nie może zawierać NaN ani nieskończoności.
+
+**Rzeczywisty wynik próby:** [UZUPEŁNIJ PO TESTACH]
+
+### Korekta 2 – Walidacja danych
+
+**Prompt pierwotny:** PROMPT 5.
+
+**Sytuacja do przetestowania:** Przekazanie do programu nieprawidłowych danych.
+
+**Dodatkowe polecenie:**
+
+Rozszerz testy walidacji o wartości NaN, nieskończoność, wartości ujemne oraz nieprawidłowe wymiary tablic. Każdy nieprawidłowy przypadek powinien zostać wykryty przed rozpoczęciem obliczeń i zakończyć się czytelnym komunikatem błędu.
+
+**Rzeczywisty wynik próby:** [UZUPEŁNIJ PO TESTACH]
+
+---
+
+## 10. Podsumowanie
+
+Projekt został podzielony na osiem głównych etapów przebudowy.
+
+Każdy prompt wprowadza nowe funkcjonalności i rozwija wcześniejszą wersję programu. Kolejność zmian pozwala stopniowo przejść od podstawowego analizatora postaci do rozbudowanego systemu wykorzystującego NumPy.
+
+Ważnym elementem procesu jest testowanie kolejnych etapów, wykrywanie przypadków brzegowych i poprawianie promptów na podstawie rzeczywistych wyników działania modelu AI.
