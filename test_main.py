@@ -18,6 +18,8 @@ from main import (
 
 class TestAnalizatorRPG(unittest.TestCase):
 
+    # 1. Normalizacja statystyk
+
     def test_normalizacja(self):
         dane = np.array([
             [10, 20, 30, 40],
@@ -41,6 +43,8 @@ class TestAnalizatorRPG(unittest.TestCase):
 
         np.testing.assert_allclose(wynik[:, 0], [0, 0])
         np.testing.assert_allclose(wynik[:, 2], [0, 0])
+
+    # 2. Walidacja danych
 
     def test_walidacja_poprawnych_danych(self):
         waliduj(
@@ -102,6 +106,15 @@ class TestAnalizatorRPG(unittest.TestCase):
                 np.ones((1, 4))
             )
 
+    def test_niezgodna_liczba_nazw_i_statystyk(self):
+        with self.assertRaises(ValueError):
+            waliduj(
+                np.array(["A", "B", "C"]),
+                np.ones((2, 4))
+            )
+
+    # 3. Role postaci
+
     def test_role(self):
         dane = np.array([
             [100, 40, 10, 15],
@@ -115,6 +128,47 @@ class TestAnalizatorRPG(unittest.TestCase):
             role,
             ["Szturmowiec", "Obrońca", "Wszechstronny"]
         )
+
+    # 4. Obliczanie siły i ranking
+
+    def test_ranking(self):
+        dane = np.array([
+            [10, 10, 10, 10],
+            [20, 20, 20, 20],
+            [30, 30, 30, 30]
+        ], dtype=float)
+
+        sila = oblicz_sile(dane)
+        ranking = np.argsort(-sila, kind="stable")
+
+        np.testing.assert_array_equal(ranking, [2, 1, 0])
+
+    def test_stabilny_ranking_przy_remisie(self):
+        dane = np.array([
+            [10, 20, 30, 40],
+            [10, 20, 30, 40],
+            [20, 30, 40, 50]
+        ], dtype=float)
+
+        sila = oblicz_sile(dane)
+        ranking = np.argsort(-sila, kind="stable")
+
+        np.testing.assert_array_equal(ranking, [2, 0, 1])
+
+    def test_sila_w_przedziale_od_zero_do_jeden(self):
+        dane = np.array([
+            [10, 20, 30, 40],
+            [20, 40, 50, 60],
+            [30, 60, 70, 80]
+        ], dtype=float)
+
+        sila = oblicz_sile(dane)
+
+        self.assertTrue(np.all(sila >= 0))
+        self.assertTrue(np.all(sila <= 1))
+        self.assertTrue(np.all(np.isfinite(sila)))
+
+    # 5. Macierz pojedynków
 
     def test_macierz_pojedynkow(self):
         sila = np.array([0.1, 0.5, 0.9])
@@ -132,6 +186,22 @@ class TestAnalizatorRPG(unittest.TestCase):
             [[0.5, 0.5], [0.5, 0.5]]
         )
 
+    def test_macierz_dla_wiekszej_liczby_postaci(self):
+        sila = np.array([0.1, 0.3, 0.5, 0.7, 0.9])
+        wynik = macierz_pojedynkow(sila)
+
+        self.assertEqual(wynik.shape, (5, 5))
+        self.assertTrue(np.all(np.isfinite(wynik)))
+        self.assertTrue(np.all(wynik >= 0))
+        self.assertTrue(np.all(wynik <= 1))
+
+        np.testing.assert_allclose(
+            wynik + wynik.T,
+            np.ones((5, 5))
+        )
+
+    # 6. Średnie szanse wygranej
+
     def test_srednie_szanse(self):
         pojedynki = np.array([
             [0.5, 0.8, 0.6],
@@ -146,17 +216,7 @@ class TestAnalizatorRPG(unittest.TestCase):
             [0.7, 0.45, 0.35]
         )
 
-    def test_ranking(self):
-        dane = np.array([
-            [10, 10, 10, 10],
-            [20, 20, 20, 20],
-            [30, 30, 30, 30]
-        ], dtype=float)
-
-        sila = oblicz_sile(dane)
-        ranking = np.argsort(-sila, kind="stable")
-
-        np.testing.assert_array_equal(ranking, [2, 1, 0])
+    # 7. Eksport CSV
 
     def test_csv(self):
         nazwy = np.array(["A", "B"])
@@ -188,17 +248,38 @@ class TestAnalizatorRPG(unittest.TestCase):
             self.assertEqual(dane[1][1], "B")
             self.assertEqual(dane[2][1], "A")
 
-    def test_stabilny_ranking_przy_remisie(self):
-        dane = np.array([
-            [10, 20, 30, 40],
-            [10, 20, 30, 40],
-            [20, 30, 40, 50]
-        ], dtype=float)
+    def test_csv_naglowki_i_format(self):
+        nazwy = np.array(["Żołnierz", "Mag"])
+        role = np.array(["Obrońca", "Szturmowiec"])
+        sila = np.array([0.4, 0.8])
+        szanse = np.array([0.3, 0.7])
+        ranking = np.array([1, 0])
 
-        sila = oblicz_sile(dane)
-        ranking = np.argsort(-sila, kind="stable")
+        with tempfile.TemporaryDirectory() as folder:
+            sciezka = os.path.join(folder, "test.csv")
 
-        np.testing.assert_array_equal(ranking, [2, 0, 1])
+            zapisz_csv(
+                sciezka,
+                nazwy,
+                role,
+                sila,
+                szanse,
+                ranking
+            )
+
+            with open(sciezka, "rb") as plik:
+                zawartosc = plik.read()
+
+            self.assertTrue(
+                zawartosc.startswith(b"\xef\xbb\xbf")
+            )
+
+            tekst = zawartosc.decode("utf-8-sig")
+
+            self.assertIn("Postać", tekst)
+            self.assertIn("Średnia szansa wygranej", tekst)
+            self.assertIn("Żołnierz", tekst)
+            self.assertIn("80.00%", tekst)
 
 
 if __name__ == "__main__":
