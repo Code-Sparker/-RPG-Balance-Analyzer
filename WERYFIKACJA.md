@@ -2,99 +2,161 @@
 
 ## 1. Cel weryfikacji
 
-Celem weryfikacji było sprawdzenie, czy program RPG Balance Analyzer działa poprawnie i realizuje wymagania odtworzone na podstawie analizy wersji docelowej.
+Celem weryfikacji było sprawdzenie, czy program RPG Balance Analyzer realizuje wymagania odtworzone na podstawie analizy wersji docelowej.
 
-Sprawdzono poprawność obliczeń, normalizację statystyk, ranking postaci, przypisywanie ról, symulację pojedynków, walidację danych oraz eksport wyników do pliku CSV.
+Sprawdzono poprawność obliczeń, normalizację statystyk, ranking postaci, przypisywanie ról, walidację danych, symulację pojedynków oraz eksport wyników do pliku CSV.
 
 ## 2. Zakres przeprowadzonych testów
 
 | Wymaganie | Sposób sprawdzenia | Wynik |
 |---|---|---|
-| Wykorzystanie NumPy | Sprawdzenie struktury danych | Do sprawdzenia |
-| Normalizacja min-max | Test wartości minimalnych i maksymalnych | Do sprawdzenia |
-| Obsługa stałych kolumn | Test jednakowych wartości statystyki | Do sprawdzenia |
-| Ważony wynik siły | Sprawdzenie obliczeń | Do sprawdzenia |
-| Ranking postaci | Porównanie kolejności wyników | Do sprawdzenia |
-| Przypisywanie ról | Sprawdzenie przypisanych ról | Do sprawdzenia |
-| Walidacja danych | Test nieprawidłowych danych | Do sprawdzenia |
-| Macierz pojedynków | Sprawdzenie wyników symulacji | Do sprawdzenia |
-| Średnie szanse wygranej | Sprawdzenie obliczeń procentowych | Do sprawdzenia |
-| Eksport CSV | Sprawdzenie wygenerowanego pliku | Do sprawdzenia |
+| Wykorzystanie NumPy | Sprawdzenie struktury danych i działania programu | Potwierdzone |
+| Normalizacja min-max | Test wartości minimalnych i maksymalnych | Działa |
+| Obsługa stałych kolumn | Test jednakowych wartości statystyki | Działa |
+| Ważony wynik siły | Test obliczania siły | Przetestowane |
+| Ranking postaci | Test kolejności wyników | Działa |
+| Przypisywanie ról | Test przypisanych ról | Działa |
+| Walidacja danych | Test nieprawidłowych danych | Działa |
+| Macierz pojedynków | Test macierzy i symetrii wyników | Działa |
+| Średnie szanse wygranej | Test obliczeń średnich | Działa |
+| Eksport CSV | Odczyt wygenerowanego pliku | Działa |
+| Filtrowanie postaci | Wymaga osobnego potwierdzenia | Niepotwierdzone |
+| Statystyki zbiorcze | Wymaga osobnego potwierdzenia średnich, minimów i maksimów | Niepotwierdzone |
 
 ## 3. Testy jednostkowe
 
-Testy jednostkowe przygotowano w pliku `test_main.py`.
+Testy jednostkowe przygotowano w pliku `test_main.py` z wykorzystaniem biblioteki `unittest`.
 
-Ich zadaniem jest sprawdzenie poprawności poszczególnych funkcji programu, w szczególności:
+Sprawdzają one:
 
-- normalizacji statystyk,
-- obliczania siły postaci,
-- tworzenia rankingu,
-- przypisywania ról,
-- walidacji danych wejściowych,
-- symulacji pojedynków,
-- generowania macierzy pojedynków,
-- eksportowania wyników do CSV.
+- normalizację statystyk,
+- obsługę stałych kolumn,
+- obliczanie siły postaci,
+- tworzenie rankingu,
+- stabilność rankingu przy remisie,
+- przypisywanie ról,
+- walidację danych wejściowych,
+- macierz pojedynków,
+- średnie szanse wygranej,
+- eksport wyników do CSV,
+- wybrane przypadki brzegowe.
 
-Wynik testów należy uzupełnić po uruchomieniu polecenia:
+Polecenie uruchamiające testy:
 
 `python -m unittest test_main -v`
 
-**Wynik uruchomienia:** [WPISZ RZECZYWISTY WYNIK]
+**Wynik uruchomienia:**
 
-## 4. Korekty promptów – Reverse Prompt Engineering
+`Ran 20 tests in 0.097s`
+
+`OK`
+
+Wszystkie 20 testów zakończyło się powodzeniem.
+
+## 4. Korekty i doprecyzowanie promptów – Reverse Prompt Engineering
 
 ### Korekta 1 – Obsługa stałych kolumn
 
+**Prompt pierwotny:** PROMPT 2.
+
 **Problem:**
 
-Podczas testowania należy sprawdzić przypadek, w którym wszystkie postacie mają identyczną wartość danej statystyki. Taka sytuacja może powodować dzielenie przez zero podczas normalizacji min-max.
+Normalizacja min-max może prowadzić do dzielenia przez zero, gdy wszystkie postacie mają identyczną wartość danej statystyki.
 
-**Zmiana promptu:**
+**Doprecyzowanie wymagania:**
 
-Doprecyzowanie wymagania dotyczącego obsługi kolumn, w których wartość minimalna jest równa maksymalnej.
+Program powinien wykrywać kolumny, w których minimum jest równe maksimum, i przypisywać im bezpieczną wartość znormalizowaną równą zero.
 
 **Oczekiwany rezultat:**
 
-Program powinien bezpiecznie obsługiwać takie kolumny, nie generując wartości NaN ani nieskończoności.
+Brak wartości NaN i nieskończoności w wyniku normalizacji.
 
-**Dowód weryfikacji:** [WPISZ WYNIK RZECZYWISTEGO TESTU]
+**Dowód weryfikacji:**
+
+Test `test_stala_kolumna` zakończył się wynikiem OK.
 
 ### Korekta 2 – Walidacja danych wejściowych
 
+**Prompt pierwotny:** PROMPT 5.
+
 **Problem:**
 
-Należy sprawdzić zachowanie programu dla nieprawidłowych danych wejściowych, takich jak wartości ujemne, brakujące dane, NaN oraz nieskończoność.
+Nieprawidłowe dane mogą prowadzić do błędnych obliczeń lub nieczytelnych błędów programu.
 
-**Zmiana promptu:**
+**Doprecyzowanie wymagania:**
 
-Doprecyzowanie wymagań dotyczących walidacji danych przed rozpoczęciem obliczeń.
+Walidacja powinna obejmować:
+
+- powtarzające się nazwy postaci,
+- wartości ujemne,
+- wartości NaN,
+- nieskończoność,
+- nieprawidłowy wymiar tablicy,
+- niezgodną liczbę nazw i zestawów statystyk.
 
 **Oczekiwany rezultat:**
 
-Program powinien wykrywać nieprawidłowe dane i zgłaszać czytelny błąd zamiast wykonywać niepoprawne obliczenia.
+Program powinien zgłaszać `ValueError` dla niepoprawnych danych.
 
-**Dowód weryfikacji:** [WPISZ WYNIK RZECZYWISTEGO TESTU]
+**Dowód weryfikacji:**
 
-## 5. Weryfikacja eksportu CSV
+Testy `test_duplikaty`, `test_ujemne_dane`, `test_nan`, `test_nieskonczonosc`, `test_zly_wymiar` oraz `test_niezgodna_liczba_nazw_i_statystyk` zakończyły się wynikiem OK.
 
-Wyniki działania programu są eksportowane do pliku `ranking_postaci.csv`.
+## 5. Weryfikacja działania programu
 
-Podczas sprawdzania należy zweryfikować:
+Program uruchomiono poleceniem:
 
-- obecność wszystkich analizowanych postaci,
-- poprawność nagłówków kolumn,
-- zgodność rankingu z wynikami programu,
-- obecność informacji o rolach i sile postaci,
-- poprawność średnich szans wygranej,
-- możliwość otwarcia pliku i odczytania polskich znaków.
+`python main.py`
 
-**Wynik:** [WPISZ RZECZYWISTY WYNIK]
+Wynik działania:
 
-## 6. Podsumowanie
+- przeprowadzono analizę 8 postaci,
+- wygenerowano ranking postaci,
+- przypisano role,
+- obliczono siłę postaci,
+- wygenerowano macierz pojedynków 8 × 8,
+- obliczono średnie szanse wygranej,
+- wyświetlono statystyki zbiorcze przedstawione przez program.
+
+Najsilniejszą postacią według wygenerowanego rankingu został Berserker.
+
+Program zakończył działanie bez błędów.
+
+## 6. Weryfikacja eksportu CSV
+
+Wygenerowany plik: `ranking_postaci.csv`.
+
+Sprawdzono:
+
+- obecność wszystkich 8 postaci,
+- poprawność nagłówków,
+- separator średnikowy,
+- polskie znaki,
+- zgodność kolejności rankingu z wynikiem programu,
+- zapis siły postaci,
+- zapis przypisanych ról,
+- zapis średnich szans wygranej.
+
+Plik został odczytany w PowerShell za pomocą polecenia:
+
+`Get-Content .\ranking_postaci.csv -Encoding UTF8`
+
+**Wynik:**
+
+Eksport CSV zakończył się powodzeniem. Wszystkie 8 postaci zostało zapisanych poprawnie.
+
+## 7. Podsumowanie
 
 Projekt RPG Balance Analyzer został przygotowany w ramach zadania Reverse Prompt Engineering.
 
-Program jest rozwijany etapowo za pomocą serii promptów, których celem jest odtworzenie funkcjonalności programu docelowego bez przekazywania modelowi kodu wersji B.
+Program został rozwinięty etapowo za pomocą ośmiu głównych promptów, których celem było odtworzenie funkcjonalności wersji docelowej bez przekazywania modelowi kodu wersji B podczas procesu tworzenia.
 
-Końcowa ocena zgodności powinna uwzględniać wyniki testów jednostkowych, testy przypadków brzegowych oraz porównanie zachowania programu z wymaganiami wersji docelowej.
+Przeprowadzone testy potwierdziły poprawność sprawdzonych funkcjonalności programu.
+
+Wykonano 20 testów jednostkowych i wszystkie zakończyły się wynikiem OK. Dodatkowo uruchomiono cały program i sprawdzono wygenerowany plik CSV.
+
+Przetestowano również przypadki brzegowe dotyczące stałych kolumn oraz nieprawidłowych danych wejściowych.
+
+Funkcje filtrowania i szczegółowych statystyk zbiorczych wymagają osobnego potwierdzenia. Pełna zgodność z wersją docelową powinna zostać ostatecznie potwierdzona przez porównanie wyników obu programów.
+
+Projekt realizuje sprawdzone założenia Reverse Prompt Engineering i posiada udokumentowany proces testowania.

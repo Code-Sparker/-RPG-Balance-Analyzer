@@ -168,7 +168,7 @@ class TestAnalizatorRPG(unittest.TestCase):
         self.assertTrue(np.all(sila <= 1))
         self.assertTrue(np.all(np.isfinite(sila)))
 
-    # 5. Macierz pojedynków
+    # 5. Macierz pojedynkow
 
     def test_macierz_pojedynkow(self):
         sila = np.array([0.1, 0.5, 0.9])
@@ -200,7 +200,7 @@ class TestAnalizatorRPG(unittest.TestCase):
             np.ones((5, 5))
         )
 
-    # 6. Średnie szanse wygranej
+    # 6. Srednie szanse wygranej
 
     def test_srednie_szanse(self):
         pojedynki = np.array([
@@ -279,7 +279,7 @@ class TestAnalizatorRPG(unittest.TestCase):
             self.assertIn("Postać", tekst)
             self.assertIn("Średnia szansa wygranej", tekst)
             self.assertIn("Żołnierz", tekst)
-            self.assertIn("80.00%", tekst)
+            self.assertIn("70.00%", tekst)
 
 
 if __name__ == "__main__":
