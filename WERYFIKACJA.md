@@ -1,123 +1,100 @@
-WERYFIKACJA PROJEKTU – RPG BALANCE ANALYZER
+# WERYFIKACJA PROJEKTU – RPG BALANCE ANALYZER
 
-Autor: [Wpisz imię i nazwisko]
-Temat: Reverse Prompt Engineering – system balansu postaci RPG
+## 1. Cel weryfikacji
 
-1. Cel testowania
+Celem weryfikacji było sprawdzenie, czy program RPG Balance Analyzer działa poprawnie i realizuje wymagania odtworzone na podstawie analizy wersji docelowej.
 
-Celem testowania było sprawdzenie poprawności działania programu analizującego balans postaci RPG.
+Sprawdzono poprawność obliczeń, normalizację statystyk, ranking postaci, przypisywanie ról, symulację pojedynków, walidację danych oraz eksport wyników do pliku CSV.
 
-Sprawdzono obliczenia NumPy, normalizację statystyk, przypisywanie ról, ranking, walidację danych, macierz pojedynków, średnie szanse wygranej oraz eksport CSV.
+## 2. Zakres przeprowadzonych testów
 
-2. Wyniki testów automatycznych
+| Wymaganie | Sposób sprawdzenia | Wynik |
+|---|---|---|
+| Wykorzystanie NumPy | Sprawdzenie struktury danych | Do sprawdzenia |
+| Normalizacja min-max | Test wartości minimalnych i maksymalnych | Do sprawdzenia |
+| Obsługa stałych kolumn | Test jednakowych wartości statystyki | Do sprawdzenia |
+| Ważony wynik siły | Sprawdzenie obliczeń | Do sprawdzenia |
+| Ranking postaci | Porównanie kolejności wyników | Do sprawdzenia |
+| Przypisywanie ról | Sprawdzenie przypisanych ról | Do sprawdzenia |
+| Walidacja danych | Test nieprawidłowych danych | Do sprawdzenia |
+| Macierz pojedynków | Sprawdzenie wyników symulacji | Do sprawdzenia |
+| Średnie szanse wygranej | Sprawdzenie obliczeń procentowych | Do sprawdzenia |
+| Eksport CSV | Sprawdzenie wygenerowanego pliku | Do sprawdzenia |
 
-Wykonano polecenie:
+## 3. Testy jednostkowe
 
-bash
-python -m unittest test_main -v
+Testy jednostkowe przygotowano w pliku `test_main.py`.
 
+Ich zadaniem jest sprawdzenie poprawności poszczególnych funkcji programu, w szczególności:
 
-Wynik rzeczywistego uruchomienia:
+- normalizacji statystyk,
+- obliczania siły postaci,
+- tworzenia rankingu,
+- przypisywania ról,
+- walidacji danych wejściowych,
+- symulacji pojedynków,
+- generowania macierzy pojedynków,
+- eksportowania wyników do CSV.
 
-Liczba testów: 16
-Testy zakończone powodzeniem: 16
-Testy zakończone błędem: 0
-Czas wykonania: 0.112 sekundy
-Końcowy status: OK
-3. Tabela wymaganie → działanie → dowód
-Wymaganie	Działa?	Dowód
-Dane w tablicach NumPy	TAK	NAZWY, STATYSTYKI
-Normalizacja min-max	TAK	test_normalizacja
-Obsługa stałych kolumn	TAK	test_stala_kolumna
-Ważone obliczanie siły	TAK	oblicz_sile()
-Ranking postaci	TAK	test_ranking
-Stabilny ranking	TAK	test_stabilny_ranking_przy_remisie
-Przypisywanie ról	TAK	test_role
-Walidacja danych	TAK	Testy duplikatów, NaN i wartości ujemnych
-Macierz pojedynków	TAK	test_macierz_pojedynkow
-Obsługa remisów	TAK	test_remis
-Średnie szanse wygranej	TAK	test_srednie_szanse
-Eksport CSV	TAK	test_csv
-4. Wynik rankingu
+Wynik testów należy uzupełnić po uruchomieniu polecenia:
 
-Po uruchomieniu programu otrzymano następującą kolejność:
+`python -m unittest test_main -v`
 
-Miejsce	Postać	Siła
-1	Berserker	0.5349
-2	Łotrzyk	0.5106
-3	Paladyn	0.4889
-4	Mag	0.4750
-5	Łucznik	0.4587
-6	Wojownik	0.4538
-7	Strażnik	0.4500
-8	Druid	0.3950
+**Wynik uruchomienia:** [WPISZ RZECZYWISTY WYNIK]
 
-Średnia siła wszystkich postaci wyniosła 0.4709.
+## 4. Korekty promptów – Reverse Prompt Engineering
 
-Najsilniejszą postacią został Berserker.
+### Korekta 1 – Obsługa stałych kolumn
 
-5. Eksport CSV
+**Problem:**
 
-Program poprawnie utworzył plik ranking_postaci.csv.
+Podczas testowania należy sprawdzić przypadek, w którym wszystkie postacie mają identyczną wartość danej statystyki. Taka sytuacja może powodować dzielenie przez zero podczas normalizacji min-max.
 
-Zastosowano:
+**Zmiana promptu:**
 
-Kodowanie UTF-8 z BOM.
-Separator średnik.
-Nagłówki: Miejsce, Postać, Rola, Siła, Średnia szansa wygranej.
-Numerowanie miejsc od 1.
-Cztery miejsca po przecinku dla siły.
-Procentowy format średniej szansy wygranej.
+Doprecyzowanie wymagania dotyczącego obsługi kolumn, w których wartość minimalna jest równa maksymalnej.
 
-Poprawność zapisu sprawdzono testem test_csv, który zakończył się powodzeniem.
+**Oczekiwany rezultat:**
 
-6. Dodatkowe przypadki testowe
+Program powinien bezpiecznie obsługiwać takie kolumny, nie generując wartości NaN ani nieskończoności.
 
-Sprawdzono:
+**Dowód weryfikacji:** [WPISZ WYNIK RZECZYWISTEGO TESTU]
 
-Kolumny zawierające identyczne wartości.
-Dwie postacie o identycznej sile.
-Zduplikowane nazwy postaci.
-Ujemne statystyki.
-Wartości NaN.
-Wartości nieskończone.
-Nieprawidłowy wymiar macierzy.
-Dane zawierające tylko jedną postać.
+### Korekta 2 – Walidacja danych wejściowych
 
-Wszystkie przygotowane testy zakończyły się powodzeniem.
+**Problem:**
 
-7. Dwie korekty promptów
-Korekta 1 – normalizacja stałych kolumn
+Należy sprawdzić zachowanie programu dla nieprawidłowych danych wejściowych, takich jak wartości ujemne, brakujące dane, NaN oraz nieskończoność.
 
-Problem: Przy identycznych wartościach statystyki w kolumnie rozpiętość wynosi zero. Zwykła normalizacja mogłaby prowadzić do dzielenia przez zero.
+**Zmiana promptu:**
 
-Wprowadzona poprawka: Wymaganie wykorzystania np.divide, parametru out oraz where.
+Doprecyzowanie wymagań dotyczących walidacji danych przed rozpoczęciem obliczeń.
 
-Test: test_stala_kolumna.
+**Oczekiwany rezultat:**
 
-Wynik: Test zakończył się powodzeniem. Stałe kolumny zawierają zera.
+Program powinien wykrywać nieprawidłowe dane i zgłaszać czytelny błąd zamiast wykonywać niepoprawne obliczenia.
 
-Korekta 2 – remisy w rankingu i pojedynkach
+**Dowód weryfikacji:** [WPISZ WYNIK RZECZYWISTEGO TESTU]
 
-Problem: Postacie o identycznej sile powinny mieć równe szanse wygranej, a ranking powinien zachowywać kolejność wejściową.
+## 5. Weryfikacja eksportu CSV
 
-Wprowadzona poprawka: Wymaganie ustawienia przekątnej macierzy na 0.5 oraz zastosowania stabilnego sortowania np.argsort(-sila, kind="stable").
+Wyniki działania programu są eksportowane do pliku `ranking_postaci.csv`.
 
-Testy:
+Podczas sprawdzania należy zweryfikować:
 
-test_remis
-test_stabilny_ranking_przy_remisie
+- obecność wszystkich analizowanych postaci,
+- poprawność nagłówków kolumn,
+- zgodność rankingu z wynikami programu,
+- obecność informacji o rolach i sile postaci,
+- poprawność średnich szans wygranej,
+- możliwość otwarcia pliku i odczytania polskich znaków.
 
-Wynik: Oba testy zakończyły się powodzeniem.
+**Wynik:** [WPISZ RZECZYWISTY WYNIK]
 
-8. Wnioski
+## 6. Podsumowanie
 
-Przebudowany program wykorzystuje bibliotekę NumPy do wektorowego przetwarzania statystyk postaci.
+Projekt RPG Balance Analyzer został przygotowany w ramach zadania Reverse Prompt Engineering.
 
-Dodano normalizację, ważone obliczanie siły, klasyfikację ról, ranking, walidację danych oraz model prawdopodobieństwa wygranej w pojedynkach.
+Program jest rozwijany etapowo za pomocą serii promptów, których celem jest odtworzenie funkcjonalności programu docelowego bez przekazywania modelowi kodu wersji B.
 
-Program generuje raport i eksportuje wyniki do CSV.
-
-Przygotowane testy automatyczne potwierdziły poprawność sprawdzonych funkcjonalności.
-
-Projekt spełnia główne wymagania techniczne zadania. Pełną zgodność z oryginalną wersją docelową należy potwierdzić przez porównanie z jej kompletnym kodem.
+Końcowa ocena zgodności powinna uwzględniać wyniki testów jednostkowych, testy przypadków brzegowych oraz porównanie zachowania programu z wymaganiami wersji docelowej.
