@@ -1,73 +1,94 @@
-RPG Balance Analyzer
-Opis projektu
+# RPG Balance Analyzer
 
-RPG Balance Analyzer to program napisany w języku Python, który analizuje balans postaci RPG. Wykorzystuje bibliotekę NumPy do wykonywania obliczeń matematycznych i operacji na tablicach.
+## Opis projektu
 
-Projekt powstał w ramach zadania Reverse Prompt Engineering. Początkowy program został stopniowo rozbudowany za pomocą promptów przekazywanych modelowi AI.
+RPG Balance Analyzer to program służący do analizowania i porównywania balansu postaci w grach RPG.
 
-Funkcjonalności
-Przechowywanie statystyk postaci w tablicach NumPy.
-Normalizacja statystyk metodą min-max.
-Obliczanie ważonej siły postaci.
-Automatyczne przypisywanie ról.
-Tworzenie rankingu postaci.
-Walidacja danych wejściowych.
-Symulacja pojedynków.
-Obliczanie średnich szans wygranej.
-Wyświetlanie macierzy pojedynków.
-Eksport wyników do pliku CSV.
-Automatyczne testy jednostkowe.
-Wykorzystane technologie
-Python 3
-NumPy
-CSV
-unittest
-Instalacja
+Projekt został wykonany w ramach zadania Reverse Prompt Engineering. Celem było odtworzenie funkcjonalności programu docelowego na podstawie analizy kodu początkowego i przygotowanie serii promptów prowadzących model AI przez kolejne etapy przebudowy.
 
-Zainstaluj wymagane biblioteki:
+Model AI otrzymał wyłącznie kod początkowy. Kod wersji docelowej nie był przekazywany modelowi jako gotowe rozwiązanie.
 
-bash
+## Funkcjonalności
+
+Program oferuje:
+
+- przechowywanie statystyk postaci w tablicach NumPy,
+- normalizację statystyk metodą min-max,
+- obliczanie ważonego wyniku siły postaci,
+- tworzenie rankingu postaci,
+- automatyczne przypisywanie ról,
+- filtrowanie postaci,
+- obliczanie statystyk zbiorczych,
+- walidację danych wejściowych,
+- symulację pojedynków,
+- generowanie macierzy szans zwycięstwa,
+- obliczanie średnich szans wygranej,
+- eksport wyników do pliku CSV.
+
+## Wykorzystane technologie
+
+- Python 3
+- NumPy
+- csv
+- unittest
+
+## Struktura projektu
+
+| Plik | Opis |
+|---|---|
+| `main.py` | Główny program analizatora |
+| `test_main.py` | Testy jednostkowe |
+| `prompty.md` | Dokumentacja promptów wykorzystanych w procesie |
+| `WERYFIKACJA.md` | Dokumentacja testów i weryfikacji |
+| `ranking_postaci.csv` | Wyniki analizy postaci |
+| `requirements.txt` | Lista wymaganych bibliotek |
+
+## Instalacja
+
+Wymagany jest Python 3.
+
+Zainstaluj wymagane biblioteki poleceniem:
+
+```bash
 pip install -r requirements.txt
+```
 
-Uruchomienie programu
+## Uruchamianie programu
 
-W terminalu wpisz:
+Uruchom terminal w folderze projektu i wpisz:
 
-bash
+```bash
 python main.py
+```
 
+Program przeprowadzi analizę postaci i wygeneruje wyniki, w tym plik CSV.
 
-Program wyświetli ranking postaci, statystyki oraz macierz pojedynków.
+## Uruchamianie testów
 
-Dodatkowo wygeneruje plik:
+Aby uruchomić testy jednostkowe, wpisz:
 
-ranking_postaci.csv
-
-Uruchomienie testów
-
-Aby uruchomić testy automatyczne, wpisz:
-
-bash
+```bash
 python -m unittest test_main -v
+```
 
+## Wyniki
 
-Testy sprawdzają między innymi normalizację, walidację, ranking, role, pojedynki i eksport CSV.
+Program generuje plik:
 
-Struktura projektu
-main.py – główny program analizujący postacie.
-test_main.py – testy automatyczne.
-prompty.md – dokumentacja promptów wykorzystanych w przebudowie.
-requirements.txt – wymagane biblioteki.
-WERYFIKACJA.md – dokumentacja sprawdzania poprawności.
-ranking_postaci.csv – raport wygenerowany przez program.
-Wyniki
+`ranking_postaci.csv`
 
-Program analizuje osiem postaci RPG.
+Zawiera on wyniki analizy, ranking postaci, ich role, wartości siły oraz średnie szanse zwycięstwa.
 
-Najsilniejszą postacią w aktualnym zestawie danych jest Berserker.
+## Reverse Prompt Engineering
 
-Średnia siła wszystkich postaci wynosi około 0.4709.
+Proces przebudowy został podzielony na osiem etapów opisanych w pliku `prompty.md`.
 
-Autor
+Każdy etap wprowadza kolejne wymagania techniczne, począwszy od wykorzystania NumPy, poprzez normalizację, ranking i symulację pojedynków, aż do walidacji i testowania.
 
-[Wpisz swoje imię i nazwisko]
+## Weryfikacja
+
+Szczegółowe informacje o testach i sprawdzaniu poprawności programu znajdują się w pliku `WERYFIKACJA.md`.
+
+## Autor
+
+Imię i nazwisko: [WPISZ SWOJE IMIĘ I NAZWISKO]
